@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import 'product.dart';
 
 class Products with ChangeNotifier{ 
-   final List <Product> _items=[
+   List <Product> _items=[      // the error is disappear when we put final variable definer but it work batter if we will not used   
     Product(
       id: 'p1',
       title: 'Red Shirt',
@@ -39,6 +39,9 @@ class Products with ChangeNotifier{
 
   List <Product> get items {
     return [..._items];
+  }
+  Product  findById(String id){
+     return _items.firstWhere((product) =>product.id == id );
   }
 
   void addProduct(){

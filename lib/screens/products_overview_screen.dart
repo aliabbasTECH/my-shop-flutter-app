@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
 import '../widgets/product_Grid.dart';
 
 class ProductOverViewScreen extends StatelessWidget {
@@ -9,7 +8,7 @@ class ProductOverViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Shop"),
+        title: const Text("My Shop"),
       ),
         body: ProductGridView(),
     );
