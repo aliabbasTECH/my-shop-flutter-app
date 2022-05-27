@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myshop2/providers/Cart.dart';
+import 'package:myshop2/providers/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/product_detail_screen.dart';
@@ -14,6 +16,8 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context, listen: false); 
+    final authData= Provider.of<Auth>(context, listen: false);   // listen false means listen one time and get data from provider one time  
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -21,7 +25,9 @@ class ProductItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              arguments: product.id,
+              // it will get product.id direct from providers/product.dart  (note: not from products), and save in argument when someone click on 
+              // ClipRRect it will send id 
+              arguments: product.id, 
             );
           },
           child: Image.network(
@@ -36,9 +42,9 @@ class ProductItem extends StatelessWidget {
                   icon: Icon(
                     product.isFavorite ? Icons.favorite : Icons.favorite_border,
                   ),
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
-                    product.toggleFavoriteStatus();
+                    product.toggleFavoriteStatus(authData.token as String,authData.userId );
                   },
                 ),
           ),
@@ -50,8 +56,19 @@ class ProductItem extends StatelessWidget {
             icon: Icon(
               Icons.shopping_cart,
             ),
-            onPressed: () {},
-            color: Theme.of(context).accentColor,
+            onPressed: () {
+              cart.addItem(product.id,product.price,product.title);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content:Text(" item add to cart"),
+                  action: SnackBarAction(label: "UNDO",onPressed: (){
+                    cart.removeSingleItem(product.id);
+                  } ),
+                  )
+              ); // in old version it is |=> Scaffold.of(context).showSnackBar(SnackBar(content:Text(" item add to cart")));
+            },
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),
